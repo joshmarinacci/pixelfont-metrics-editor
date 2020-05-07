@@ -29,14 +29,13 @@ const MetricsList = ({stuff, setGlobal, set})=>{
                 <label>x</label>
                 <input type="number" value={metrics.x}
                        onChange={(e)=>set(metrics.num,'x',parseFloat(e.target.value))}/>
-                <label>y</label>
-                <input type="number" value={metrics.y}/>
+                {/*<label>y</label>*/}
+                {/*<input type="number" value={metrics.y}/>*/}
                 <label>w</label>
                 <input type="number" value={metrics.w}
                        onChange={(e)=>set(metrics.num,'w',parseInt(e.target.value))}/>
-                />
-                <label>h</label>
-                <input type="number" value={metrics.h}/>
+                {/*<label>h</label>*/}
+                {/*<input type="number" value={metrics.h}/>*/}
             </li>
         })}
     </ul>
@@ -77,21 +76,25 @@ const MetricsCanvas = ({stuff,counter,sc})=>{
 }
 
 
-const ExportPanel = ({})=>{
-    let [exportText,setExportText] = useState("foo")
+function generateOutput(stuff) {
+    let obj = {
+        offset:stuff.offset,
+        metrics:stuff.metrics,
+    }
+    return JSON.stringify(obj,null,'  ')
+}
+
+const ExportPanel = ({stuff, counter})=>{
+    let [ep,setEp] = useState("foo")
     return <div className={'vbox'}>
-        <button onClick={()=>{
-            console.log('exporting')
-            setExportText("foo2")
-        }}>export</button>
-        <textarea className={'export-area'}>{exportText}</textarea>
+        <button onClick={()=>setEp(generateOutput(stuff))}>export</button>
+        <textarea className={'export-area'} value={ep}/>
     </div>
 }
 
 function App() {
     let [m,setM] = useState(0)
     let set = (num, prop, value) => {
-        console.log("setting",num,prop,value)
         metrics[num][prop] = value
         setM(m+1)
     }
