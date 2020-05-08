@@ -20,12 +20,14 @@ export const MetricsControlPanel = ({stuff, onLoadImage, onChange}) => {
         </HBox>
         <HBox>
             <label> average width</label>
-            <input type="number" value={8}/>
+            <input type="number" value={stuff.default_width} onChange={(e)=>{
+                stuff.default_width = parseInt(e.target.value)
+                onChange(stuff)
+            }}/>
         </HBox>
         <HBox>
             <label>average height</label>
             <input type="number" value={stuff.default_height} onChange={(e)=>{
-                console.log("changing")
                 stuff.default_height = parseInt(e.target.value)
                 onChange(stuff)
             }}/>
