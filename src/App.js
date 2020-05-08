@@ -1,54 +1,56 @@
-import React, {useEffect, useRef, useState} from 'react'
-import './App.css';
+import React, {useState} from 'react'
+import './App.css'
+import {MetricsCanvas} from './MetricsCanvas.js'
 
-let img = new Image()
-img.src = "BitScript.png"
-let stuff = {
-    offset:0,
-    includes_punc:true,
-    includes_numbers:true,
-    includes_alpha_upper:true,
-    includes_alpha_lower:true,
-}
-let metrics = []
-if(stuff.includes_punc) {
-    for (let i = 32; i <= 47; i++) {
-        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+function generateMetrics() {
+    let stuff = {
+        offset: 0,
+        includes_punc: true,
+        includes_numbers: true,
+        includes_alpha_upper: true,
+        includes_alpha_lower: true,
     }
-    for (let i = 58; i <= 64; i++) {
-        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    let metrics = []
+    if (stuff.includes_punc) {
+        for (let i = 32; i <= 47; i++) {
+            metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+        }
+        for (let i = 58; i <= 64; i++) {
+            metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+        }
+        for (let i = 91; i <= 96; i++) {
+            metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+        }
+        for (let i = 123; i <= 126; i++) {
+            metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+        }
     }
-    for (let i = 91; i <= 96; i++) {
-        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    if (stuff.includes_numbers) {
+        for (let i = 48; i <= 57; i++) {
+            metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+        }
     }
-    for (let i = 123; i <= 126; i++) {
-        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    if (stuff.includes_alpha_upper) {
+        for (let i = 65; i <= 90; i++) {
+            metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+        }
     }
-}
-if(stuff.includes_numbers) {
-    for (let i = 48; i <= 57; i++) {
-        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    if (stuff.includes_alpha_lower) {
+        for (let i = 97; i <= 122; i++) {
+            metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+        }
     }
-}
-if(stuff.includes_alpha_upper) {
-    for (let i = 65; i <= 90; i++) {
-        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
-    }
-}
-if(stuff.includes_alpha_lower) {
-    for (let i = 97; i <= 122; i++) {
-        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
-    }
-}
 
-let ct = 0
-metrics.forEach(m =>{
-    if(!m) return
-    m.x = ct*8
-    ct++
-})
+    let ct = 0
+    metrics.forEach(m => {
+        if (!m) return
+        m.x = ct * 8
+        ct++
+    })
 
-stuff.metrics = metrics
+    stuff.metrics = metrics
+    return stuff
+}
 
 const MetricsList = ({stuff, setGlobal, set})=>{
     let metrics = stuff.metrics
@@ -77,48 +79,6 @@ const MetricsList = ({stuff, setGlobal, set})=>{
         })}
     </ul>
 }
-
-const MetricsCanvas = ({stuff,counter,sc,image})=>{
-    let ref = useRef()
-    useEffect(()=>{
-        if(ref.current) {
-            let ctx = ref.current.getContext('2d')
-            ctx.fillStyle = 'red'
-            // ctx.fillRect(0,0,30,30)
-            ctx.imageSmoothingEnabled = false
-
-            ctx.save()
-            ctx.scale(sc,sc)
-            if(image) ctx.drawImage(image,0,0)
-            ctx.restore()
-
-            ctx.save()
-
-            stuff.metrics.forEach(m => {
-                ctx.strokeStyle = 'yellow'
-                ctx.strokeRect((stuff.offset + m.x)*sc,
-                    m.y*sc,
-                    m.w*sc,
-                    m.h*sc)
-                ctx.fillStyle = 'magenta'
-                ctx.fillText(m.ch, (stuff.offset+m.x)*sc+10, 1*sc+10)
-            })
-
-            ctx.restore()
-        }
-    },[ref,counter, sc, stuff,image])
-    if(image) {
-        console.log("image is loaded")
-        return <div className={'scroll metrics-canvas'}>
-            <canvas ref={ref} width={image.width*sc} height={image.height*sc}></canvas>
-        </div>
-    } else {
-        return <div className={'scroll metrics-canvas'}>
-            <canvas ref={ref} width={600 * sc} height={100}></canvas>
-        </div>
-    }
-}
-
 
 function generateOutput(stuff) {
     let obj = {
@@ -184,14 +144,15 @@ const MetricsControlPanel = ({stuff, onLoadImage}) => {
 }
 
 function App() {
-    let [m,setM] = useState(0)
+    let [stuff,setStuff] = useState(()=>generateMetrics())
+    let [counter,setCounter] = useState(0)
     let [image,setImage] = useState(null)
     let set = (num, prop, value) => {
-        metrics[num][prop] = value
-        setM(m+1)
+        stuff.metrics[num][prop] = value
+        setCounter(counter+1)
     }
     let setGlobal = (name) => {
-        setM(m+1)
+        setCounter(counter+1)
     }
 
     let onLoadImage = (evt) => {
@@ -213,8 +174,8 @@ function App() {
                 <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>
             </div>
             <div className={"vbox"}>
-                <MetricsCanvas stuff={stuff} counter={m} sc={5} image={image}/>
-                <ExportPanel stuff={stuff} counter={m}/>
+                <MetricsCanvas stuff={stuff} counter={counter} sc={5} image={image}/>
+                <ExportPanel stuff={stuff} counter={counter}/>
             </div>
         </div>
     );
