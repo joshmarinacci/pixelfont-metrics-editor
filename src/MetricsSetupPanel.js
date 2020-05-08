@@ -7,7 +7,13 @@ export const MetricsControlPanel = ({stuff, onLoadImage, onChange}) => {
             <label>load image</label> <input type="file" onChange={onLoadImage}/>
         </HBox>
         <HBox>
-            <label>punctuation</label> <input type="checkbox" checked={true}/>
+            <label>punctuation</label> <input type="checkbox" checked={stuff.includes_punc}
+                                              onChange={(e)=>{
+                                                  console.log(e.target.checked)
+                                                  stuff.includes_punc = e.target.checked
+                                                  onChange(stuff)
+                                              }}
+        />
         </HBox>
         <HBox>
             <label>numbers</label> <input type="checkbox" checked={true}/>

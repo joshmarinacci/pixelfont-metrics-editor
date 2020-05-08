@@ -1,23 +1,36 @@
+.fillbox {
+  border: 0px solid blue;
+  padding:0;
+  margin:0;
+  display: flex;
+  flex-direction: row;
+  height: 95vh;
+  width: 95vw;
+}
 .hbox {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  /*align-items: flex-start;*/
+  align-items: stretch;
 }
 .vbox {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  /*align-items: flex-start;*/
 }
 ul {
   border: 1px solid black;
+  padding: 0;
 }
 
 li {
   display: flex;
+  flex-direction: row;
   width: 20em;
 }
 li label {
-  width: 1.5em;
+  /*min-width: 4em;*/
+  width: 4em;
 }
 li input {
   width: 4em;
@@ -28,10 +41,11 @@ li input {
 .scroll {
   border: 3px solid red;
   overflow: scroll;
-  max-width: 40em;
-  width: 40em;
 }
 
+.grow {
+  flex:1.0;
+}
 
 .export-area {
   min-height: 400px;
@@ -43,9 +57,10 @@ li input {
 
 .metrics-canvas {
   border: 1px solid green;
-  min-height: 400px;
-  min-width: 400px;
-  max-width: 400px;
+  /*min-height: 400px;*/
+  /*min-width: 400px;*/
+  max-width: 800px;
+  /*max-width: 100%;*/
   max-height: 400px;
 }
 

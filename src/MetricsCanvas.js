@@ -22,8 +22,12 @@ export const MetricsCanvas = ({stuff, counter, sc, image}) => {
                     m.y * sc,
                     m.w * sc,
                     m.h * sc)
+                let size = 30
+                ctx.font = `${size}px bold sans-serif`
+                ctx.fillStyle = 'white'
+                ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10, m.y * sc + size)
                 ctx.fillStyle = 'magenta'
-                ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10, m.y * sc + 10)
+                ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10 + 1, m.y * sc + size + 1)
             })
 
             ctx.restore()

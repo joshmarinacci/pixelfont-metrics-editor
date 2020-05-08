@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import './App.css'
 import {MetricsCanvas} from './MetricsCanvas.js'
 import {MetricsControlPanel} from './MetricsSetupPanel.js'
-import {HBox} from './util.js'
+import {FillBox, HBox} from './util.js'
 
 function generateStuff(img) {
     let stuff = {
@@ -76,7 +76,7 @@ function updateStuff(stuff, img) {
 
 const MetricsList = ({stuff, setGlobal, set})=>{
     let metrics = stuff.metrics
-    return <ul>
+    return <ul className={'scroll grow'}>
         <li>
             <label>offset</label>
             <input type="number" value={stuff.offset} onChange={(e)=>{
@@ -123,6 +123,7 @@ function App() {
     let [stuff,setStuff] = useState(()=>generateStuff())
     let [counter,setCounter] = useState(0)
     let [image,setImage] = useState(null)
+    let [scale, setScale] = useState(0)
     let set = (num, prop, value) => {
         stuff.metrics[num][prop] = value
         setCounter(counter+1)
@@ -149,16 +150,21 @@ function App() {
     }
 
     return (
-        <HBox>
+        <FillBox>
             <div className="vbox">
                 <MetricsControlPanel stuff={stuff} onLoadImage={onLoadImage} onChange={onControlChange}/>
                 <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>
             </div>
-            <div className={"vbox"}>
-                <MetricsCanvas stuff={stuff} counter={counter} sc={5} image={image}/>
+            <div className={"vbox grow"}>
+                <HBox>
+                    <button onClick={()=>setScale(scale+1)}>+</button>
+                    <label>{Math.pow(2,scale)}</label>
+                    <button onClick={()=>setScale(scale-1)}>-</button>
+                </HBox>
+                <MetricsCanvas stuff={stuff} counter={counter} sc={Math.pow(2,scale)} image={image}/>
                 <ExportPanel stuff={stuff} counter={counter}/>
             </div>
-        </HBox>
+        </FillBox>
     );
 }
 
