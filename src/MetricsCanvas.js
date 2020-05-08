@@ -17,17 +17,24 @@ export const MetricsCanvas = ({stuff, counter, sc, image}) => {
             ctx.save()
 
             stuff.metrics.forEach(m => {
-                ctx.strokeStyle = 'yellow'
-                ctx.strokeRect((stuff.offset + m.x) * sc,
-                    m.y * sc,
-                    m.w * sc,
-                    m.h * sc)
-                let size = 30
-                ctx.font = `${size}px bold sans-serif`
-                ctx.fillStyle = 'white'
-                ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10, m.y * sc + size)
-                ctx.fillStyle = 'magenta'
-                ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10 + 1, m.y * sc + size + 1)
+
+                // glyph bounds
+                [['white',-1],['white',1],['black',0]].forEach(([col,i])=>{
+                    ctx.strokeStyle = col
+                    ctx.strokeRect(
+                        (stuff.offset + m.x) * sc + i,
+                        m.y * sc + i,
+                        m.w * sc,
+                        m.h * sc)
+                });
+
+                [['white',-1],['white',1],['red',0]].forEach(([col,i])=>{
+                    // glyph char
+                    let size = 24
+                    ctx.font = `${size}px bold sans-serif`
+                    ctx.fillStyle = col
+                    ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10+i, m.y * sc + size +i)
+                });
             })
 
             ctx.restore()
