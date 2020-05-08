@@ -3,6 +3,7 @@ import './App.css'
 import {MetricsCanvas} from './MetricsCanvas.js'
 import {MetricsControlPanel} from './MetricsSetupPanel.js'
 import {FillBox, HBox} from './util.js'
+import {MetricsList} from './MetricsList.js'
 
 function generateStuff(img) {
     let stuff = {
@@ -74,34 +75,6 @@ function updateStuff(stuff, img) {
     stuff.metrics = metrics
 }
 
-const MetricsList = ({stuff, setGlobal, set})=>{
-    let metrics = stuff.metrics
-    return <ul className={'scroll grow'}>
-        <li>
-            <label>offset</label>
-            <input type="number" value={stuff.offset} onChange={(e)=>{
-                stuff.offset = parseInt(e.target.value)
-                setGlobal('offset',stuff.offset)
-            }}/>
-        </li>
-        {metrics.map((metrics,i) => {
-            return <li key={i}>
-                <label>{metrics.ch}</label>
-                <label>x</label>
-                <input type="number" value={metrics.x}
-                       onChange={(e)=>set(metrics.num,'x',parseFloat(e.target.value))}/>
-                {/*<label>y</label>*/}
-                {/*<input type="number" value={metrics.y}/>*/}
-                <label>w</label>
-                <input type="number" value={metrics.w}
-                       onChange={(e)=>set(metrics.num,'w',parseInt(e.target.value))}/>
-                {/*<label>h</label>*/}
-                {/*<input type="number" value={metrics.h}/>*/}
-            </li>
-        })}
-    </ul>
-}
-
 function generateOutput(stuff) {
     let obj = {
         offset:stuff.offset,
@@ -123,7 +96,7 @@ function App() {
     let [stuff,setStuff] = useState(()=>generateStuff())
     let [counter,setCounter] = useState(0)
     let [image,setImage] = useState(null)
-    let [scale, setScale] = useState(0)
+    let [scale, setScale] = useState(3)
     let set = (num, prop, value) => {
         stuff.metrics[num][prop] = value
         setCounter(counter+1)
