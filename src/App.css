@@ -24,10 +24,6 @@ li input {
 }
 
 
-canvas {
-  border: 1px solid black;
-}
-
 
 .scroll {
   border: 3px solid red;
@@ -38,8 +34,18 @@ canvas {
 
 
 .export-area {
-  min-width: 40em;
-  min-height: 40em;
+  min-height: 400px;
+  min-width: 400px;
+  max-width: 400px;
+  max-height: 400px;
   border: 1px solid black;
+}
+
+.metrics-canvas {
+  border: 1px solid green;
+  min-height: 400px;
+  min-width: 400px;
+  max-width: 400px;
+  max-height: 400px;
 }
 

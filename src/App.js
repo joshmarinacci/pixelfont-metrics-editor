@@ -4,17 +4,54 @@ import './App.css';
 let img = new Image()
 img.src = "BitScript.png"
 let stuff = {
-    offset:10,
+    offset:0,
+    includes_punc:true,
+    includes_numbers:true,
+    includes_alpha_upper:true,
+    includes_alpha_lower:true,
 }
 let metrics = []
-for(let i=65; i<90; i++) {
-    metrics[i] = {num:i, x:(i-65)*8, y:0, w:8, h:8, blank:false, ch:String.fromCharCode(i)}
+if(stuff.includes_punc) {
+    for (let i = 32; i <= 47; i++) {
+        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    }
+    for (let i = 58; i <= 64; i++) {
+        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    }
+    for (let i = 91; i <= 96; i++) {
+        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    }
+    for (let i = 123; i <= 126; i++) {
+        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    }
 }
+if(stuff.includes_numbers) {
+    for (let i = 48; i <= 57; i++) {
+        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    }
+}
+if(stuff.includes_alpha_upper) {
+    for (let i = 65; i <= 90; i++) {
+        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    }
+}
+if(stuff.includes_alpha_lower) {
+    for (let i = 97; i <= 122; i++) {
+        metrics[i] = {num: i, x: 0, y: 0, w: 8, h: 8, blank: false, ch: String.fromCharCode(i)}
+    }
+}
+
+let ct = 0
+metrics.forEach(m =>{
+    if(!m) return
+    m.x = ct*8
+    ct++
+})
+
 stuff.metrics = metrics
 
 const MetricsList = ({stuff, setGlobal, set})=>{
     let metrics = stuff.metrics
-    console.log("rendering list")
     return <ul>
         <li>
             <label>offset</label>
@@ -41,7 +78,7 @@ const MetricsList = ({stuff, setGlobal, set})=>{
     </ul>
 }
 
-const MetricsCanvas = ({stuff,counter,sc})=>{
+const MetricsCanvas = ({stuff,counter,sc,image})=>{
     let ref = useRef()
     useEffect(()=>{
         if(ref.current) {
@@ -52,7 +89,7 @@ const MetricsCanvas = ({stuff,counter,sc})=>{
 
             ctx.save()
             ctx.scale(sc,sc)
-            ctx.drawImage(img,0,0)
+            if(image) ctx.drawImage(image,0,0)
             ctx.restore()
 
             ctx.save()
@@ -69,10 +106,17 @@ const MetricsCanvas = ({stuff,counter,sc})=>{
 
             ctx.restore()
         }
-    },[ref,counter, sc, stuff])
-    return <div className={'scroll'}>
-        <canvas ref={ref} width={600*sc} height={100}></canvas>
-    </div>
+    },[ref,counter, sc, stuff,image])
+    if(image) {
+        console.log("image is loaded")
+        return <div className={'scroll metrics-canvas'}>
+            <canvas ref={ref} width={image.width*sc} height={image.height*sc}></canvas>
+        </div>
+    } else {
+        return <div className={'scroll metrics-canvas'}>
+            <canvas ref={ref} width={600 * sc} height={100}></canvas>
+        </div>
+    }
 }
 
 
@@ -92,8 +136,56 @@ const ExportPanel = ({stuff, counter})=>{
     </div>
 }
 
+const HBox = ({children}) => {
+    return <div className={"hbox"}>{children}</div>
+}
+
+const MetricsControlPanel = ({stuff, onLoadImage}) => {
+    return <div className={"vbox"}>
+        <HBox>
+            <label>load image</label> <input type="file" onChange={onLoadImage}/>
+        </HBox>
+        <HBox>
+            <label>punctuation</label> <input type="checkbox" checked={true}/>
+        </HBox>
+        <HBox>
+            <label>numbers</label> <input type="checkbox" checked={true}/>
+        </HBox>
+        <HBox>
+            <label>uppercase</label> <input type="checkbox" checked={true}/>
+        </HBox>
+        <HBox>
+            <label>lowercase</label> <input type="checkbox" checked={true}/>
+        </HBox>
+        <HBox>
+            <label> average width</label>
+            <input type="number" value={8}/>
+        </HBox>
+        <HBox>
+            <label>average height</label>
+            <input type="number" value={8}/>
+        </HBox>
+        <HBox>
+            <label>line-height</label>
+            <input type="number" value={10}/>
+        </HBox>
+        <HBox>
+            <label>ascent</label>
+            <input type="number" value={6}/>
+        </HBox>
+        <HBox>
+            <label>descent</label>
+            <input type="number" value={2}/>
+        </HBox>
+        <HBox>
+            <button>update</button>
+        </HBox>
+    </div>
+}
+
 function App() {
     let [m,setM] = useState(0)
+    let [image,setImage] = useState(null)
     let set = (num, prop, value) => {
         metrics[num][prop] = value
         setM(m+1)
@@ -101,15 +193,31 @@ function App() {
     let setGlobal = (name) => {
         setM(m+1)
     }
-  return (
-      <div className="hbox">
-          <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>
-          <div className={"vbox"}>
-              <MetricsCanvas stuff={stuff} counter={m} sc={10}/>
-              <ExportPanel stuff={stuff} counter={m}/>
-          </div>
-      </div>
-  );
+
+    let onLoadImage = (evt) => {
+        console.log("selected",evt.target.files)
+        if(evt.target.files && evt.target.files.length >= 1) {
+            let img = new Image()
+            img.onload = () => {
+                console.log("fully loaded the image")
+                setImage(img)
+            }
+            img.src = URL.createObjectURL(evt.target.files[0])
+        }
+    }
+
+    return (
+        <div className="hbox">
+            <div className="vbox">
+                <MetricsControlPanel stuff={stuff} onLoadImage={onLoadImage}/>
+                <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>
+            </div>
+            <div className={"vbox"}>
+                <MetricsCanvas stuff={stuff} counter={m} sc={5} image={image}/>
+                <ExportPanel stuff={stuff} counter={m}/>
+            </div>
+        </div>
+    );
 }
 
 
