@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import './App.css'
 import {MetricsCanvas} from './MetricsCanvas.js'
 
-function generateMetrics() {
+function generateStuff(img) {
     let stuff = {
         offset: 0,
         includes_punc: true,
@@ -44,7 +44,16 @@ function generateMetrics() {
     let ct = 0
     metrics.forEach(m => {
         if (!m) return
-        m.x = ct * 8
+        if(img) {
+            m.x = ct * 8
+            if(m.x > img.width) {
+                m.x = (ct *8)%img.width
+                m.y = Math.floor((ct *8)/img.width)*8
+            }
+
+        } else {
+            m.x = ct * 8
+        }
         ct++
     })
 
@@ -144,7 +153,7 @@ const MetricsControlPanel = ({stuff, onLoadImage}) => {
 }
 
 function App() {
-    let [stuff,setStuff] = useState(()=>generateMetrics())
+    let [stuff,setStuff] = useState(()=>generateStuff())
     let [counter,setCounter] = useState(0)
     let [image,setImage] = useState(null)
     let set = (num, prop, value) => {
@@ -162,6 +171,7 @@ function App() {
             img.onload = () => {
                 console.log("fully loaded the image")
                 setImage(img)
+                setStuff(generateStuff(img))
             }
             img.src = URL.createObjectURL(evt.target.files[0])
         }

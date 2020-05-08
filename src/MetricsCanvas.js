@@ -5,8 +5,8 @@ export const MetricsCanvas = ({stuff, counter, sc, image}) => {
     useEffect(() => {
         if (ref.current) {
             let ctx = ref.current.getContext('2d')
-            ctx.fillStyle = 'red'
-            // ctx.fillRect(0,0,30,30)
+            ctx.fillStyle = 'white'
+            ctx.fillRect(0,0,ref.current.width,ref.current.height)
             ctx.imageSmoothingEnabled = false
 
             ctx.save()
@@ -23,7 +23,7 @@ export const MetricsCanvas = ({stuff, counter, sc, image}) => {
                     m.w * sc,
                     m.h * sc)
                 ctx.fillStyle = 'magenta'
-                ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10, 1 * sc + 10)
+                ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10, m.y * sc + 10)
             })
 
             ctx.restore()
