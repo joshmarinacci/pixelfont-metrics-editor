@@ -14,6 +14,8 @@ function generateStuff(img) {
         includes_alpha_lower: true,
         default_width: 10,
         default_height: 10,
+        ascent:8,
+        descent:2,
     }
     updateStuff(stuff,img)
     return stuff
@@ -76,11 +78,7 @@ function updateStuff(stuff, img) {
 }
 
 function generateOutput(stuff) {
-    let obj = {
-        offset:stuff.offset,
-        metrics:stuff.metrics,
-    }
-    return JSON.stringify(obj,null,'  ')
+    return JSON.stringify(stuff,null,'  ')
 }
 
 const ExportPanel = ({stuff, counter})=>{
@@ -111,10 +109,16 @@ function App() {
             img.onload = () => {
                 console.log("fully loaded the image")
                 setImage(img)
-                setStuff(generateStuff(img))
+                setStuff(generateStuff(img,null))
             }
             img.src = URL.createObjectURL(evt.target.files[0])
         }
+    }
+
+    let onLoadJSON = evt => {
+        fetch(URL.createObjectURL(evt.target.files[0])).then(res=>res.json()).then(data=>{
+            setStuff(generateStuff(image,data))
+        })
     }
     let onControlChange = () => {
         console.log('changing')
@@ -125,7 +129,7 @@ function App() {
     return (
         <FillBox>
             <div className="vbox">
-                <MetricsControlPanel stuff={stuff} onLoadImage={onLoadImage} onChange={onControlChange}/>
+                <MetricsControlPanel stuff={stuff} onLoadImage={onLoadImage} onLoadJSON={onLoadJSON} onChange={onControlChange}/>
                 <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>
             </div>
             <div className={"vbox grow"}>

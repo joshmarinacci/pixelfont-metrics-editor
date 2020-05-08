@@ -1,10 +1,13 @@
 import React from 'react'
 import {HBox} from './util.js'
 
-export const MetricsControlPanel = ({stuff, onLoadImage, onChange}) => {
+export const MetricsControlPanel = ({stuff, onLoadImage, onLoadJSON, onChange}) => {
     return <div className={"vbox"}>
         <HBox>
             <label>load image</label> <input type="file" onChange={onLoadImage}/>
+        </HBox>
+        <HBox>
+            <label>load JSON</label> <input type="file" onChange={onLoadJSON}/>
         </HBox>
         <HBox>
             <label>punctuation</label> <input type="checkbox" checked={stuff.includes_punc}
@@ -58,11 +61,11 @@ export const MetricsControlPanel = ({stuff, onLoadImage, onChange}) => {
         </HBox>
         <HBox>
             <label>ascent</label>
-            <input type="number" value={6}/>
+            <input type="number" value={stuff.ascent}/>
         </HBox>
         <HBox>
             <label>descent</label>
-            <input type="number" value={2}/>
+            <input type="number" value={stuff.descent}/>
         </HBox>
         <HBox>
             <button>update</button>
