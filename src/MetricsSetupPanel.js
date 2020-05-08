@@ -9,20 +9,34 @@ export const MetricsControlPanel = ({stuff, onLoadImage, onChange}) => {
         <HBox>
             <label>punctuation</label> <input type="checkbox" checked={stuff.includes_punc}
                                               onChange={(e)=>{
-                                                  console.log(e.target.checked)
                                                   stuff.includes_punc = e.target.checked
                                                   onChange(stuff)
                                               }}
         />
         </HBox>
         <HBox>
-            <label>numbers</label> <input type="checkbox" checked={true}/>
+            <label>numbers</label> <input type="checkbox" checked={stuff.includes_numbers}
+                                          onChange={(e)=>{
+                                              stuff.includes_numbers = e.target.checked
+                                              onChange(stuff)
+                                          }}
+        />
         </HBox>
         <HBox>
-            <label>uppercase</label> <input type="checkbox" checked={true}/>
+            <label>uppercase</label> <input type="checkbox" checked={stuff.includes_alpha_upper}
+                                            onChange={(e)=>{
+                                                stuff.includes_alpha_upper = e.target.checked
+                                                onChange(stuff)
+                                            }}
+        />
         </HBox>
         <HBox>
-            <label>lowercase</label> <input type="checkbox" checked={true}/>
+            <label>lowercase</label> <input type="checkbox" checked={stuff.includes_alpha_lower}
+                                            onChange={(e)=>{
+                                                stuff.includes_alpha_lower = e.target.checked
+                                                onChange(stuff)
+                                            }}
+        />
         </HBox>
         <HBox>
             <label> average width</label>
