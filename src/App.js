@@ -5,19 +5,27 @@ import {MetricsControlPanel} from './MetricsSetupPanel.js'
 import {FillBox, HBox} from './util.js'
 import {MetricsList} from './MetricsList.js'
 
-function generateStuff(img) {
+function setif(obj, key, backup) {
+    if(obj && obj.hasOwnProperty(key)) return obj[key]
+    return backup
+}
+function generateStuff(img,data) {
     let stuff = {
-        offset: 0,
-        includes_punc: true,
-        includes_numbers: true,
-        includes_alpha_upper: true,
-        includes_alpha_lower: true,
-        default_width: 10,
-        default_height: 10,
-        ascent:8,
-        descent:2,
+        offset: setif(data,'offset',0),
+        includes_punc: setif(data,'includes_punc',true),
+        includes_numbers: setif(data,'includes_numbers',true),
+        includes_alpha_upper: setif(data,'includes_alpha_upper',true),
+        includes_alpha_lower: setif(data,'includes_alpha_lower',true),
+        default_width: setif(data,'default_width',10),
+        default_height: setif(data,'default_height',10),
+        ascent: setif(data,'ascent',8),
+        descent: setif(data,'descent',2),
     }
-    updateStuff(stuff,img)
+    if(data) {
+        stuff.metrics = data.metrics
+    } else {
+        updateStuff(stuff, img)
+    }
     return stuff
 }
 function updateStuff(stuff, img) {

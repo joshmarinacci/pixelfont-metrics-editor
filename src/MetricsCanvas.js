@@ -17,7 +17,7 @@ export const MetricsCanvas = ({stuff, counter, sc, image}) => {
             ctx.save()
 
             stuff.metrics.forEach(m => {
-
+                if(!m) return
                 // glyph bounds
                 [['white',-1],['white',1],['black',0]].forEach(([col,i])=>{
                     ctx.strokeStyle = col

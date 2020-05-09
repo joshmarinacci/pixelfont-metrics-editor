@@ -11,6 +11,7 @@ export const MetricsList = ({stuff, setGlobal, set}) => {
             }}/>
         </li>
         {metrics.map((metrics, i) => {
+            if(!metrics) return <div key={i}></div>
             return <li key={i}>
                 <label>{metrics.ch}</label>
                 <label>x</label>
@@ -25,7 +26,6 @@ export const MetricsList = ({stuff, setGlobal, set}) => {
                 <label>h</label>
                 <input type="number" value={metrics.h}
                        onChange={(e) => set(metrics.num, 'h', parseFloat(e.target.value))}/>
-                />
             </li>
         })}
     </ul>
