@@ -26,6 +26,9 @@ export const MetricsList = ({stuff, setGlobal, set}) => {
                 <label>h</label>
                 <input type="number" value={metrics.h}
                        onChange={(e) => set(metrics.num, 'h', parseFloat(e.target.value))}/>
+                <label>bl</label>
+                <input type="number" value={metrics.baseline}
+                       onChange={(e) => set(metrics.num, 'baseline', parseFloat(e.target.value))}/>
             </li>
         })}
     </ul>

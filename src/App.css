@@ -28,12 +28,12 @@ li {
   flex-direction: row;
   width: 20em;
 }
-li label {
+li label:first-child {
   /*min-width: 4em;*/
-  width: 4em;
+  width: 3em;
 }
 li input {
-  width: 4em;
+  width: 3em;
 }
 
 

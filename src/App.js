@@ -26,6 +26,12 @@ function generateStuff(img,data) {
     } else {
         updateStuff(stuff, img)
     }
+    stuff.metrics.forEach(m => {
+        if(!m) return
+        if(!m.hasOwnProperty('baseline')) {
+            m.baseline = 0
+        }
+    })
     return stuff
 }
 function updateStuff(stuff, img) {
@@ -63,7 +69,7 @@ function updateStuff(stuff, img) {
 
     let metrics = chars.map(i => {
         if(!i) return null
-        return {num: i, x: 0, y: 0, w: stuff.default_width, h: stuff.default_height, blank: false, ch: String.fromCharCode(i)}
+        return {num: i, x: 0, y: 0, w: stuff.default_width, h: stuff.default_height, blank: false, ch: String.fromCharCode(i), baseline:0}
     })
 
     let ct = 0
