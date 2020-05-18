@@ -80,19 +80,19 @@ function updateStuff(stuff, img) {
             stuff.metrics[ch] = {
                 num: ch, x: 0, y: 0, w: stuff.default_width, h: stuff.default_height,
                 blank: false, ch: String.fromCharCode(ch),
-                baseline:0
+                baseline: 0
             }
             m = stuff.metrics[ch]
-        }
-        if(img) {
-            m.x = ct * stuff.default_width
-            if(m.x >= img.width) {
-                m.x = (ct * stuff.default_width)%img.width
-                m.y = Math.floor((ct *stuff.default_width)/img.width)*stuff.default_height
-            }
+            if (img) {
+                m.x = ct * stuff.default_width
+                if (m.x >= img.width) {
+                    m.x = (ct * stuff.default_width) % img.width
+                    m.y = Math.floor((ct * stuff.default_width) / img.width) * stuff.default_height
+                }
 
-        } else {
-            m.x = ct * stuff.default_width
+            } else {
+                m.x = ct * stuff.default_width
+            }
         }
         ct++
     })
