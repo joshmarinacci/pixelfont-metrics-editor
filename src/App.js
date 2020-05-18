@@ -35,6 +35,9 @@ function generateStuff(img,data) {
     return stuff
 }
 function updateStuff(stuff, img) {
+    if(!stuff.metrics) {
+        stuff.metrics = []
+    }
     // let metrics = []
     let chars = []
     if (stuff.includes_punc) {
@@ -67,14 +70,20 @@ function updateStuff(stuff, img) {
         }
     }
 
-    let metrics = chars.map(i => {
-        if(!i) return null
-        return {num: i, x: 0, y: 0, w: stuff.default_width, h: stuff.default_height, blank: false, ch: String.fromCharCode(i), baseline:0}
-    })
-
     let ct = 0
-    metrics.forEach(m => {
-        if (!m) return
+    chars.forEach((ch) => {
+        // console.log("char",ch)
+        if(!ch) return
+        let m = stuff.metrics[ch]
+        if(!m) {
+            console.log("adding")
+            stuff.metrics[ch] = {
+                num: ch, x: 0, y: 0, w: stuff.default_width, h: stuff.default_height,
+                blank: false, ch: String.fromCharCode(ch),
+                baseline:0
+            }
+            m = stuff.metrics[ch]
+        }
         if(img) {
             m.x = ct * stuff.default_width
             if(m.x >= img.width) {
@@ -88,7 +97,7 @@ function updateStuff(stuff, img) {
         ct++
     })
 
-    stuff.metrics = metrics
+    // stuff.metrics = metrics
 }
 
 function generateOutput(stuff) {
