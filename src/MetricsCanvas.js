@@ -22,7 +22,7 @@ export const MetricsCanvas = ({stuff, counter, sc, image}) => {
                 [['white',-1],['white',1],['black',0]].forEach(([col,i])=>{
                     ctx.strokeStyle = col
                     ctx.strokeRect(
-                        (stuff.offset + m.x) * sc + i,
+                        m.x * sc + i,
                         m.y * sc + i,
                         m.w * sc,
                         m.h * sc)
@@ -33,7 +33,7 @@ export const MetricsCanvas = ({stuff, counter, sc, image}) => {
                     let size = 24
                     ctx.font = `${size}px bold sans-serif`
                     ctx.fillStyle = col
-                    ctx.fillText(m.ch, (stuff.offset + m.x) * sc + 10+i, m.y * sc + size +i)
+                    ctx.fillText(m.ch, m.x * sc + 10+i, m.y * sc + size +i)
                 });
             })
 

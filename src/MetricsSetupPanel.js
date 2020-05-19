@@ -1,74 +1,65 @@
-import React from 'react'
+/*
+
+
+use cases
+create a new font: load an image, adjust global metrics
+edit existing: load an image and json, adjust individual metrics
+add glyph set: punctuation. append to end
+add new standalone glyph. append to end
+delete glyph set
+delete standalone glyph
+
+glyphs always sorted by char
+
+
+ */
+import React, {useRef} from 'react'
 import {HBox} from './util.js'
 
-export const MetricsControlPanel = ({stuff, onLoadImage, onLoadJSON, onChange}) => {
+export const MetricsControlPanel = ({stuff: data, onLoadImage, onLoadJSON, onAddCategory}) => {
+    let cat = useRef()
     return <div className={"vbox"}>
         <HBox>
-            <label>load image</label> <input type="file" onChange={onLoadImage}/>
+            <label>Image</label> <input type="file" onChange={onLoadImage}/>
         </HBox>
         <HBox>
-            <label>load JSON</label> <input type="file" onChange={onLoadJSON}/>
+            <label>JSON</label> <input type="file" onChange={onLoadJSON}/>
         </HBox>
+
+        {/*<HBox>*/}
+        {/*    <label>default width</label>*/}
+        {/*    <input type="number" value={data.default_width} onChange={(e)=>{*/}
+        {/*        data.default_width = parseInt(e.target.value)*/}
+        {/*        onChange(data)*/}
+        {/*    }}/>*/}
+        {/*    <label> height</label>*/}
+        {/*    <input type="number" value={data.default_height} onChange={(e)=>{*/}
+        {/*        data.default_height = parseInt(e.target.value)*/}
+        {/*        onChange(data)*/}
+        {/*    }}/>*/}
+        {/*</HBox>*/}
+        {/*<HBox>*/}
+        {/*    <label>line-height</label>*/}
+        {/*    <input type="number" value={10} />*/}
+        {/*</HBox>*/}
+        {/*<HBox>*/}
+        {/*    <label>ascent</label>*/}
+        {/*    <input type="number" value={data.ascent}/>*/}
+        {/*</HBox>*/}
+        {/*<HBox>*/}
+        {/*    <label>descent</label>*/}
+        {/*    <input type="number" value={data.descent}/>*/}
+        {/*</HBox>*/}
         <HBox>
-            <label>punctuation</label> <input type="checkbox" checked={stuff.includes_punc}
-                                              onChange={(e)=>{
-                                                  stuff.includes_punc = e.target.checked
-                                                  onChange(stuff)
-                                              }}
-        />
-        </HBox>
-        <HBox>
-            <label>numbers</label> <input type="checkbox" checked={stuff.includes_numbers}
-                                          onChange={(e)=>{
-                                              stuff.includes_numbers = e.target.checked
-                                              onChange(stuff)
-                                          }}
-        />
-        </HBox>
-        <HBox>
-            <label>uppercase</label> <input type="checkbox" checked={stuff.includes_alpha_upper}
-                                            onChange={(e)=>{
-                                                stuff.includes_alpha_upper = e.target.checked
-                                                onChange(stuff)
-                                            }}
-        />
-        </HBox>
-        <HBox>
-            <label>lowercase</label> <input type="checkbox" checked={stuff.includes_alpha_lower}
-                                            onChange={(e)=>{
-                                                stuff.includes_alpha_lower = e.target.checked
-                                                onChange(stuff)
-                                            }}
-        />
-        </HBox>
-        <HBox>
-            <label> average width</label>
-            <input type="number" value={stuff.default_width} onChange={(e)=>{
-                stuff.default_width = parseInt(e.target.value)
-                onChange(stuff)
-            }}/>
-        </HBox>
-        <HBox>
-            <label>average height</label>
-            <input type="number" value={stuff.default_height} onChange={(e)=>{
-                stuff.default_height = parseInt(e.target.value)
-                onChange(stuff)
-            }}/>
-        </HBox>
-        <HBox>
-            <label>line-height</label>
-            <input type="number" value={10}/>
-        </HBox>
-        <HBox>
-            <label>ascent</label>
-            <input type="number" value={stuff.ascent}/>
-        </HBox>
-        <HBox>
-            <label>descent</label>
-            <input type="number" value={stuff.descent}/>
-        </HBox>
-        <HBox>
-            <button>update</button>
+            <label>category</label>
+            <select ref={cat}>
+                <option value={'invalid'}>choose...</option>
+                <option value={'uppercase'}>uppercase</option>
+                <option>lowercase</option>
+                <option>numbers</option>
+                <option>punctuation</option>
+            </select>
+            <button onClick={()=>onAddCategory(cat.current.value)}>add</button>
         </HBox>
     </div>
 }

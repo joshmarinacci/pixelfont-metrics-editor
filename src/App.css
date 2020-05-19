@@ -10,8 +10,8 @@
 .hbox {
   display: flex;
   flex-direction: row;
-  /*align-items: flex-start;*/
-  align-items: stretch;
+  align-items: flex-start;
+  /*align-items: stretch;*/
 }
 .vbox {
   display: flex;
@@ -35,6 +35,9 @@ li label:first-child {
 li input {
   width: 3em;
 }
+input[type=number] {
+  width: 3em;
+}
 
 
 
@@ -48,10 +51,10 @@ li input {
 }
 
 .export-area {
-  min-height: 400px;
+  min-height: 100px;
   min-width: 400px;
   max-width: 400px;
-  max-height: 400px;
+  max-height: 100px;
   border: 1px solid black;
 }
 
