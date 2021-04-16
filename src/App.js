@@ -47,22 +47,22 @@ function generateOutput(stuff) {
     return JSON.stringify(stuff,null,'  ')
 }
 
-function download(s) {
+function download(s,name) {
     console.log("downloading the json file",s);
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(s);
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href",     dataStr);
-    downloadAnchorNode.setAttribute("download", 'foo' + ".json");
+    downloadAnchorNode.setAttribute("download", name + ".json");
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
 }
 
-const ExportPanel = ({stuff, counter})=>{
+const ExportPanel = ({stuff, counter,name})=>{
     let [ep,setEp] = useState("foo")
     return <div className={'vbox'}>
         <button onClick={()=>setEp(generateOutput(stuff))}>export</button>
-        <button onClick={()=>download(generateOutput(stuff))}>download</button>
+        <button onClick={()=>download(generateOutput(stuff),name)}>download</button>
         <textarea className={'export-area'} value={ep}/>
     </div>
 }
@@ -159,7 +159,7 @@ function App() {
                                counter={counter}
                                sc={Math.pow(2,scale)}
                                image={image}/>
-                <ExportPanel stuff={stuff} counter={counter}/>
+                <ExportPanel stuff={stuff} counter={counter} name={name}/>
             </div>
         </FillBox>
     );
