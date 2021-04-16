@@ -41,7 +41,6 @@ export const MetricsCanvas = ({stuff, counter, sc, image}) => {
         }
     }, [ref, counter, sc, stuff, image])
     if (image) {
-        console.log("image is loaded")
         return <div className={'scroll metrics-canvas'}>
             <canvas ref={ref} width={image.width * sc} height={image.height * sc}></canvas>
         </div>

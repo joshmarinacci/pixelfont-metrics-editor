@@ -40,7 +40,6 @@ function make_metric(ch, stuff) {
         m.x = (ct * stuff.default_width) % stuff.image_width
         m.y = Math.floor((ct * stuff.default_width) / stuff.image_width) * stuff.default_height
     }
-    console.log("mx is",stuff.count,m.x)
     return m
 }
 
@@ -103,11 +102,11 @@ function addCategory(stuff, cat) {
 function draw_text(ctx, stuff, text, image) {
     let dx = 0
     let dy = 0
-    let sc = 2;
+    let sc = 4;
     for(let i=0; i<text.length; i++) {
         let met = stuff.metrics[text.charCodeAt(i)]
         if(met) {
-            ctx.drawImage(image, met.x,met.y,met.w,met.h, dx*sc,dy*sc, met.w*sc,met.h*sc);
+            ctx.drawImage(image, met.x,met.y,met.w,met.h, dx*sc,(dy+met.baseline)*sc, met.w*sc,met.h*sc);
             dx += met.w
             dx += 1
         } else {
@@ -119,7 +118,7 @@ function draw_text(ctx, stuff, text, image) {
     }
 }
 
-function PixelPreview({stuff, image}) {
+function PixelPreview({stuff, image, counter}) {
     let [text, set_text] = useState("preview text")
     let ref = useRef()
     useEffect(()=>{
@@ -130,7 +129,7 @@ function PixelPreview({stuff, image}) {
             ctx.imageSmoothingEnabled = false
             if(image && stuff) draw_text(ctx,stuff,text,image)
         }
-    },[ref,text])
+    },[ref,text,stuff,image,counter])
     return <div>
         <HBox>pixel preview</HBox>
         <HBox>
@@ -167,7 +166,6 @@ function App() {
     let setGlobal = (name) => {
         setCounter(counter+1)
     }
-
     let onLoadImage = (evt) => {
         if(evt.target.files && evt.target.files.length >= 1) {
             let name = evt.target.files[0].name
@@ -180,18 +178,15 @@ function App() {
             img.src = URL.createObjectURL(evt.target.files[0])
         }
     }
-
     let onLoadJSON = evt => {
         fetch(URL.createObjectURL(evt.target.files[0]))
             .then(res=>res.json())
             .then(data=> setStuff(generateStuff(image,data)))
     }
-
     let onAddCategory = cat => {
         addCategory(stuff,cat)
         setCounter(counter+1)
     }
-
     return (
         <FillBox>
             <div className="vbox">
@@ -213,7 +208,7 @@ function App() {
                                counter={counter}
                                sc={Math.pow(2,scale)}
                                image={image}/>
-                <PixelPreview stuff={stuff} image={image}/>
+                <PixelPreview stuff={stuff} counter={counter} image={image}/>
                 <ExportPanel stuff={stuff} counter={counter} name={name}/>
             </div>
         </FillBox>
