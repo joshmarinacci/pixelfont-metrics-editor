@@ -47,10 +47,22 @@ function generateOutput(stuff) {
     return JSON.stringify(stuff,null,'  ')
 }
 
+function download(s) {
+    console.log("downloading the json file",s);
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(s);
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", 'foo' + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
 const ExportPanel = ({stuff, counter})=>{
     let [ep,setEp] = useState("foo")
     return <div className={'vbox'}>
         <button onClick={()=>setEp(generateOutput(stuff))}>export</button>
+        <button onClick={()=>download(generateOutput(stuff))}>download</button>
         <textarea className={'export-area'} value={ep}/>
     </div>
 }
