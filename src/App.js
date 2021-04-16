@@ -1,9 +1,10 @@
-import React, {useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import './App.css'
 import {MetricsCanvas} from './MetricsCanvas.js'
 import {MetricsControlPanel} from './MetricsSetupPanel.js'
 import {FillBox, HBox} from './util.js'
 import {MetricsList} from './MetricsList.js'
+import * as PropTypes from 'prop-types'
 
 function setif(obj, key, backup) {
     if(obj && obj.hasOwnProperty(key)) return obj[key]
@@ -48,9 +49,8 @@ function generateOutput(stuff) {
 }
 
 function download(s,name) {
-    console.log("downloading the json file",s);
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(s);
-    var downloadAnchorNode = document.createElement('a');
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(s)
+    const downloadAnchorNode = document.createElement('a')
     downloadAnchorNode.setAttribute("href",     dataStr);
     downloadAnchorNode.setAttribute("download", name + ".json");
     document.body.appendChild(downloadAnchorNode); // required for firefox
@@ -98,6 +98,60 @@ function addCategory(stuff, cat) {
             stuff.count++
         })
     }
+}
+
+function draw_text(ctx, stuff, text, image) {
+    let dx = 0
+    let dy = 0
+    let sc = 2;
+    for(let i=0; i<text.length; i++) {
+        let met = stuff.metrics[text.charCodeAt(i)]
+        if(met) {
+            ctx.drawImage(image, met.x,met.y,met.w,met.h, dx*sc,dy*sc, met.w*sc,met.h*sc);
+            dx += met.w
+            dx += 1
+        } else {
+            ctx.fillStyle = 'black'
+            ctx.fillRect(dx*sc,dy*sc,10*sc,10*sc);
+            dx += 10;
+            dx += 1;
+        }
+    }
+}
+
+function PixelPreview({stuff, image}) {
+    let [text, set_text] = useState("preview text")
+    let ref = useRef()
+    useEffect(()=>{
+        if (ref.current) {
+            let ctx = ref.current.getContext('2d')
+            ctx.fillStyle = 'white'
+            ctx.fillRect(0, 0, ref.current.width, ref.current.height)
+            ctx.imageSmoothingEnabled = false
+            if(image && stuff) draw_text(ctx,stuff,text,image)
+        }
+    },[ref,text])
+    return <div>
+        <HBox>pixel preview</HBox>
+        <HBox>
+            <input type={'input'} value={text} onChange={evt => set_text(evt.target.value)}/>
+        </HBox>
+        <HBox>
+            <canvas className={'preview-canvas'} ref={ref} width={64*4} height={64}/>
+        </HBox>
+    </div>
+}
+
+PixelPreview.propTypes = {
+    stuff: PropTypes.shape({
+        default_height: PropTypes.func,
+        descent: PropTypes.func,
+        default_width: PropTypes.func,
+        ascent: PropTypes.func,
+        image_height: PropTypes.number,
+        count: PropTypes.func,
+        image_width: PropTypes.number
+    })
 }
 
 function App() {
@@ -159,6 +213,7 @@ function App() {
                                counter={counter}
                                sc={Math.pow(2,scale)}
                                image={image}/>
+                <PixelPreview stuff={stuff} image={image}/>
                 <ExportPanel stuff={stuff} counter={counter} name={name}/>
             </div>
         </FillBox>
