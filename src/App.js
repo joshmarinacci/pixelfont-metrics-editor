@@ -69,7 +69,6 @@ const ExportPanel = ({stuff, counter})=>{
 
 
 function addCategory(stuff, cat) {
-    console.log("adding category", cat)
     if(cat === 'numbers') {
         for (let ch = 48; ch <= 57; ch++) {
             stuff.metrics[ch] = make_metric(ch, stuff)
@@ -105,6 +104,7 @@ function App() {
     let [stuff,setStuff] = useState(()=>generateStuff())
     let [counter,setCounter] = useState(0)
     let [image,setImage] = useState(null)
+    let [name, setName] = useState("")
     let [scale, setScale] = useState(3)
     let set = (num, prop, value) => {
         stuff.metrics[num][prop] = value
@@ -116,21 +116,23 @@ function App() {
 
     let onLoadImage = (evt) => {
         if(evt.target.files && evt.target.files.length >= 1) {
+            let name = evt.target.files[0].name
             let img = new Image()
             img.onload = () => {
-                console.log("fully loaded the image")
                 setImage(img)
                 setStuff(generateStuff(img,null))
+                setName(name)
             }
             img.src = URL.createObjectURL(evt.target.files[0])
         }
     }
 
     let onLoadJSON = evt => {
-        fetch(URL.createObjectURL(evt.target.files[0])).then(res=>res.json()).then(data=>{
-            setStuff(generateStuff(image,data))
-        })
+        fetch(URL.createObjectURL(evt.target.files[0]))
+            .then(res=>res.json())
+            .then(data=> setStuff(generateStuff(image,data)))
     }
+
     let onAddCategory = cat => {
         addCategory(stuff,cat)
         setCounter(counter+1)
@@ -143,6 +145,7 @@ function App() {
                     stuff={stuff}
                     onLoadImage={onLoadImage} onLoadJSON={onLoadJSON}
                     onAddCategory={onAddCategory}
+                    name={name}
                 />
                 <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>
             </div>

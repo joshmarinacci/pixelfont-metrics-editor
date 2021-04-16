@@ -16,9 +16,12 @@ glyphs always sorted by char
 import React, {useRef} from 'react'
 import {HBox} from './util.js'
 
-export const MetricsControlPanel = ({stuff: data, onLoadImage, onLoadJSON, onAddCategory}) => {
+export const MetricsControlPanel = ({stuff: data, onLoadImage, onLoadJSON, onAddCategory, name}) => {
     let cat = useRef()
     return <div className={"vbox"}>
+        <HBox>
+            <label>name</label> <label>{name}</label>
+        </HBox>
         <HBox>
             <label>Image</label> <input type="file" onChange={onLoadImage}/>
         </HBox>
