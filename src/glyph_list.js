@@ -19,7 +19,9 @@ export function GlyphList({datastore, selected, setSelected}) {
         datastore.on(EVENTS.GLYPHS_CHANGED,h)
         return ()=>{ datastore.off(EVENTS.GLYPHS_CHANGED,h) }
     })
-    return <ul className={"glyph-list"}>{ gs.map(g => <GlyphListItem key={g.id} glyph={g} selected={selected} setSelected={setSelected}/>) }</ul>
+    return <div className={"scroll"}>
+        <ul className={"glyph-list"}>{ gs.map(g => <GlyphListItem key={g.id} glyph={g} selected={selected} setSelected={setSelected}/>) }</ul>
+    </div>
 }
 
 GlyphList.propTypes = {datastore: PropTypes.any}
