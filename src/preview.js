@@ -36,6 +36,7 @@ function draw(can, text, datastore) {
     }
     c.save()
     c.translate(0,20)
+    c.scale(2,2)
     let x = 0
     for(let i=0; i<text.length; i++) {
         let cp = text.codePointAt(i)
@@ -50,7 +51,7 @@ function draw(can, text, datastore) {
 }
 
 export function PixelPreview({datastore}) {
-    let [text, set_text] = useState("preview text")
+    let [text, set_text] = useState("ABC 123 abc")
     let ref = useRef()
     useEffect(()=>{
         if (ref.current) draw(ref.current,text,datastore)

@@ -3,6 +3,17 @@ import * as PropTypes from 'prop-types'
 import {EVENTS} from './datastore.js'
 import {HBox, VBox} from './util.js'
 
+function MetricEditor({datastore, glyph, name}) {
+    return <HBox>
+        <label>{name}</label>
+        <input type={"number"} value={glyph[name]} onChange={(e)=>{
+            datastore.set_glyph_metric(glyph.id,name,e.target.valueAsNumber)
+        }}/>
+    </HBox>
+}
+
+MetricEditor.propTypes = {name: PropTypes.string}
+
 function MetricsPanel({datastore, selected}) {
     const [count, setcount] = useState(0)
     useEffect(()=>{
@@ -13,18 +24,11 @@ function MetricsPanel({datastore, selected}) {
     if(!selected) return <HBox>nothing selected</HBox>
     let glyph = datastore.find_glyph_by_id(selected.id)
     return <VBox>
-        <HBox>
-            <label>left</label>
-            <input type={"number"} value={glyph.left} onChange={(e)=>{
-                datastore.set_glyph_metric(selected.id,'left',e.target.valueAsNumber)
-            }}/>
-        </HBox>
-        <HBox>
-            <label>ascent</label>
-            <input type={"number"} value={glyph.ascent} onChange={(e)=>{
-                datastore.set_glyph_metric(selected.id,'ascent',e.target.valueAsNumber)
-            }}/>
-        </HBox>
+        <MetricEditor glyph={glyph} name={"baseline"} datastore={datastore}/>
+        <MetricEditor glyph={glyph} name={"ascent"} datastore={datastore}/>
+        <MetricEditor glyph={glyph} name={"descent"} datastore={datastore}/>
+        <MetricEditor glyph={glyph} name={"left"} datastore={datastore}/>
+        <MetricEditor glyph={glyph} name={"right"} datastore={datastore}/>
     </VBox>
 }
 
@@ -52,11 +56,23 @@ export function GlyphCanvas({datastore, selected}) {
             }
         }
 
-        c.strokeStyle = 'red'
-        //draw left
+        c.strokeStyle = 'blue'
         c.beginPath()
+        //baseline
+        c.moveTo(0,g.baseline*scale)
+        c.lineTo(g.width*scale,g.baseline*scale)
+        //ascent
+        c.moveTo(0,(g.baseline-g.ascent)*scale)
+        c.lineTo(g.width*scale,(g.baseline-g.ascent)*scale)
+        //descent
+        c.moveTo(0,(g.baseline+g.descent)*scale)
+        c.lineTo(g.width*scale,(g.baseline+g.descent)*scale)
+        //left
         c.moveTo(g.left*scale,0)
-        c.lineTo(g.left*scale,can.height)
+        c.lineTo(g.left*scale,g.height*scale)
+        //right
+        c.moveTo((g.width-g.right)*scale,0*scale)
+        c.lineTo((g.width-g.right)*scale,g.height*scale)
         c.stroke()
     }
 
