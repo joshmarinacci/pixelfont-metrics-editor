@@ -5,7 +5,7 @@ import {EVENTS} from './datastore.js'
 
 function draw_glyph(c, g, x) {
     c.save()
-    c.translate(x,0)
+    c.translate(x-g.left,g.height-g.baseline)
     for(let i=0; i<g.width; i++) {
         for(let j=0; j<g.height; j++) {
             let pix = g.data[i+j*g.width]
@@ -13,7 +13,7 @@ function draw_glyph(c, g, x) {
         }
     }
     c.restore()
-    return 10
+    return g.width-g.left-g.right
 }
 
 function draw_box(c, g, x) {
