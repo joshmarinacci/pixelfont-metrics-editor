@@ -146,6 +146,22 @@ function App() {
             <VBox>
                 <HBox>
                     <button onClick={()=>{
+                        let json = datastore.export_to_json()
+                        download(JSON.stringify(json,null,'   '),datastore.get_name())
+                    }}>export</button>
+                    <input type="file" onChange={(e)=>{
+                        if(!e.target.files[0]) return
+                        let name = e.target.files[0].name
+                            fetch(URL.createObjectURL(e.target.files[0]))
+                                .then(res=>res.json())
+                                .then(data=> {
+                                    console.log('data is',data)
+                                    datastore.import_from_json(data)
+                                }).catch(e => {
+                                    console.log("error",e)
+                            })
+                    }}/>
+                    <button onClick={()=>{
                         let g = datastore.make_glyph("A".codePointAt(0),"A")
                         datastore.add_glyph(g)
                     }}>add A</button>

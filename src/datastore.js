@@ -11,6 +11,7 @@ export const EVENTS = {
 export class Datastore {
     constructor() {
         this.glyphs = []
+        this.name = "font"
     }
     on(type,cb) {
         this.listeners(type).push(cb)
@@ -32,13 +33,22 @@ export class Datastore {
     fire(type,payload) {
         this.listeners(type).forEach(cb => cb(payload))
     }
-    load_from_json() {
-
+    import_from_json(data) {
+        console.log("importing from",data)
+        this.glyphs = data.glyphs
+        this.name = data.name
+        this.fire(EVENTS.GLYPHS_CHANGED)
     }
     export_to_json() {
-
+        return {
+            glyphs:this.glyphs.slice(),
+            name:this.name
+        }
     }
 
+    get_name() {
+        return this.name
+    }
     make_glyph(id,name) {
         let arr = new Array(10*10)
         arr.fill(0)
