@@ -75,6 +75,18 @@ export class Datastore {
         return this.glyphs.find(g => g.id === id)
     }
 
+    set_glyph_pixel(id,pt) {
+        let g = this.find_glyph_by_id(id)
+        let n = pt.x + pt.y * g.width
+        let v = g.data[n]
+        if(v === 0) {
+            v = 1
+        } else {
+            v = 0
+        }
+        g.data[n] = v
+        this.update_glyph(g)
+    }
 
     log(...args) {
         console.log("DATASTORE",...args)
