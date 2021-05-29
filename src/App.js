@@ -1,10 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react'
 import './App.css'
-import {MetricsCanvas} from './MetricsCanvas.js'
-import {MetricsControlPanel} from './MetricsSetupPanel.js'
-import {FillBox, HBox} from './util.js'
-import {MetricsList} from './MetricsList.js'
+import {FillBox, HBox, VBox} from './util.js'
 import * as PropTypes from 'prop-types'
+import {Datastore} from './datastore.js'
+import {GlyphList} from './glyph_list.js'
+import {GlyphCanvas} from './glyph_canvas.js'
+
+let datastore = new Datastore()
 
 function setif(obj, key, backup) {
     if(obj && obj.hasOwnProperty(key)) return obj[key]
@@ -65,7 +67,6 @@ const ExportPanel = ({stuff, counter,name})=>{
         <textarea className={'export-area'} value={ep}/>
     </div>
 }
-
 
 function addCategory(stuff, cat) {
     if(cat === 'numbers') {
@@ -154,63 +155,86 @@ PixelPreview.propTypes = {
 }
 
 function App() {
-    let [stuff,setStuff] = useState(()=>generateStuff())
-    let [counter,setCounter] = useState(0)
-    let [image,setImage] = useState(null)
-    let [name, setName] = useState("")
-    let [scale, setScale] = useState(3)
-    let set = (num, prop, value) => {
-        stuff.metrics[num][prop] = value
-        setCounter(counter+1)
-    }
-    let setGlobal = (name) => {
-        setCounter(counter+1)
-    }
-    let onLoadImage = (evt) => {
-        if(evt.target.files && evt.target.files.length >= 1) {
-            let name = evt.target.files[0].name
-            let img = new Image()
-            img.onload = () => {
-                setImage(img)
-                setStuff(generateStuff(img,null))
-                setName(name)
-            }
-            img.src = URL.createObjectURL(evt.target.files[0])
-        }
-    }
-    let onLoadJSON = evt => {
-        fetch(URL.createObjectURL(evt.target.files[0]))
-            .then(res=>res.json())
-            .then(data=> setStuff(generateStuff(image,data)))
-    }
-    let onAddCategory = cat => {
-        addCategory(stuff,cat)
-        setCounter(counter+1)
-    }
+    // let [stuff,setStuff] = useState(()=>generateStuff())
+    // let [counter,setCounter] = useState(0)
+    // let [image,setImage] = useState(null)
+    // let [name, setName] = useState("")
+    // let [scale, setScale] = useState(3)
+    // let set = (num, prop, value) => {
+    //     stuff.metrics[num][prop] = value
+    //     setCounter(counter+1)
+    // }
+    // let setGlobal = (name) => {
+    //     setCounter(counter+1)
+    // }
+    // let onLoadImage = (evt) => {
+    //     if(evt.target.files && evt.target.files.length >= 1) {
+    //         let name = evt.target.files[0].name
+    //         let img = new Image()
+    //         img.onload = () => {
+    //             setImage(img)
+    //             setStuff(generateStuff(img,null))
+    //             setName(name)
+    //         }
+    //         img.src = URL.createObjectURL(evt.target.files[0])
+    //     }
+    // }
+    // let onLoadJSON = evt => {
+    //     fetch(URL.createObjectURL(evt.target.files[0]))
+    //         .then(res=>res.json())
+    //         .then(data=> setStuff(generateStuff(image,data)))
+    // }
+    // let onAddCategory = cat => {
+    //     addCategory(stuff,cat)
+    //     setCounter(counter+1)
+    // }
+    /*
+
+    list of glyphs
+
+     */
+
+    const [selected_glyph, set_selected_glyph] = useState(null)
     return (
         <FillBox>
-            <div className="vbox">
-                <MetricsControlPanel
-                    stuff={stuff}
-                    onLoadImage={onLoadImage} onLoadJSON={onLoadJSON}
-                    onAddCategory={onAddCategory}
-                    name={name}
-                />
-                <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>
-            </div>
-            <div className={"vbox grow"}>
+            <VBox>
                 <HBox>
-                    <button onClick={()=>setScale(scale+1)}>+</button>
-                    <label>{Math.pow(2,scale)}</label>
-                    <button onClick={()=>setScale(scale-1)}>-</button>
+                    <button onClick={()=>{
+                        let g = datastore.make_glyph("A".codePointAt(0),"A")
+                        datastore.add_glyph(g)
+                    }}>add A</button>
+                    <button onClick={()=>{
+                        let g = datastore.make_glyph("B".codePointAt(0),"B")
+                        datastore.add_glyph(g)
+                    }}>add B</button>
                 </HBox>
-                <MetricsCanvas stuff={stuff}
-                               counter={counter}
-                               sc={Math.pow(2,scale)}
-                               image={image}/>
-                <PixelPreview stuff={stuff} counter={counter} image={image}/>
-                <ExportPanel stuff={stuff} counter={counter} name={name}/>
-            </div>
+                <HBox>
+                    <GlyphList datastore={datastore} selected={selected_glyph} setSelected={set_selected_glyph}/>
+                    <GlyphCanvas datastore={datastore} selected={selected_glyph}/>
+                </HBox>
+            </VBox>
+            {/*<div className="vbox">*/}
+            {/*    <MetricsControlPanel*/}
+            {/*        stuff={stuff}*/}
+            {/*        onLoadImage={onLoadImage} onLoadJSON={onLoadJSON}*/}
+            {/*        onAddCategory={onAddCategory}*/}
+            {/*        name={name}*/}
+            {/*    />*/}
+            {/*    <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>*/}
+            {/*</div>*/}
+            {/*<div className={"vbox grow"}>*/}
+            {/*    <HBox>*/}
+            {/*        <button onClick={()=>setScale(scale+1)}>+</button>*/}
+            {/*        <label>{Math.pow(2,scale)}</label>*/}
+            {/*        <button onClick={()=>setScale(scale-1)}>-</button>*/}
+            {/*    </HBox>*/}
+            {/*    <MetricsCanvas stuff={stuff}*/}
+            {/*                   counter={counter}*/}
+            {/*                   sc={Math.pow(2,scale)}*/}
+            {/*                   image={image}/>*/}
+            {/*    <PixelPreview stuff={stuff} counter={counter} image={image}/>*/}
+            {/*    <ExportPanel stuff={stuff} counter={counter} name={name}/>*/}
+            {/*</div>*/}
         </FillBox>
     );
 }
