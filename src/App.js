@@ -121,25 +121,27 @@ function draw_text(ctx, stuff, text, image) {
 }
 
 
+function AddGlyphPanel({datastore}) {
+    const [codepoint, set_codepoint] = useState(65)
+    const [name, set_name] = useState("A")
+    return <HBox>
+        <label>codepoint</label>
+        <input type="number" value={codepoint} onChange={(e)=>set_codepoint(e.target.valueAsNumber)}/>
+        <label>name</label>
+        <input type="string" value={name} onChange={(e)=>{set_name(e.target.value)}}/>
+        <button onClick={()=>{
+            let gl = datastore.make_glyph(codepoint,name)
+            datastore.add_glyph(gl)
+            set_codepoint(65)
+            set_name("A")
+        }}>add glyph</button>
+    </HBox>
+
+}
+
+AddGlyphPanel.propTypes = {datastore: PropTypes.any}
+
 function App() {
-
-    //     if(evt.target.files && evt.target.files.length >= 1) {
-    //         let name = evt.target.files[0].name
-    //         let img = new Image()
-    //         img.onload = () => {
-    //             setImage(img)
-    //             setStuff(generateStuff(img,null))
-    //             setName(name)
-    //         }
-    //         img.src = URL.createObjectURL(evt.target.files[0])
-    //     }
-    // }
-    // let onLoadJSON = evt => {
-    //     fetch(URL.createObjectURL(evt.target.files[0]))
-    //         .then(res=>res.json())
-    //         .then(data=> setStuff(generateStuff(image,data)))
-    // }
-
     const [selected_glyph, set_selected_glyph] = useState(null)
     return (
         <FillBox>
@@ -161,16 +163,18 @@ function App() {
                                     console.log("error",e)
                             })
                     }}/>
-                    <button onClick={()=>{
-                        let g = datastore.make_glyph("A".codePointAt(0),"A")
-                        datastore.add_glyph(g)
-                    }}>add A</button>
-                    <button onClick={()=>{
-                        let g = datastore.make_glyph("B".codePointAt(0),"B")
-                        datastore.add_glyph(g)
-                    }}>add B</button>
+                    {/*<button onClick={()=>{*/}
+                    {/*    let g = datastore.make_glyph("A".codePointAt(0),"A")*/}
+                    {/*    datastore.add_glyph(g)*/}
+                    {/*}}>add uppercase</button>*/}
+                    {/*<button onClick={()=>{*/}
+                    {/*    let g = datastore.make_glyph("B".codePointAt(0),"B")*/}
+                    {/*    datastore.add_glyph(g)*/}
+                    {/*}}>add lowercase</button>*/}
                 </HBox>
+                <AddGlyphPanel datastore={datastore}/>
                 <HBox>
+
                     <GlyphList datastore={datastore} selected={selected_glyph} setSelected={set_selected_glyph}/>
                     <GlyphCanvas datastore={datastore} selected={selected_glyph}/>
                     <PixelPreview datastore={datastore}/>
