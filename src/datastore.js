@@ -73,7 +73,9 @@ export class Datastore {
         this.fire(EVENTS.GLYPH_UPDATED,g)
     }
     get_sorted_glyphs_names() {
-        return this.glyphs.slice().map(glyph => ({id:glyph.id,name:glyph.name}))
+        let arr = this.glyphs.slice().map(glyph => ({id:glyph.id,name:glyph.name}))
+        arr.sort((a,b)=>a.id-b.id)
+        return arr
     }
 
     find_glyph_by_id(id){

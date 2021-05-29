@@ -23,6 +23,10 @@ ul {
   padding: 0;
 }
 
+ul.glyph-list {
+  width: 10em;
+}
+
 li {
   display: flex;
   flex-direction: row;
