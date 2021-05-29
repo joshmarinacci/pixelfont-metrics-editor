@@ -5,6 +5,7 @@ import * as PropTypes from 'prop-types'
 import {Datastore} from './datastore.js'
 import {GlyphList} from './glyph_list.js'
 import {GlyphCanvas} from './glyph_canvas.js'
+import {PixelPreview} from './preview.js'
 
 let datastore = new Datastore()
 
@@ -119,55 +120,9 @@ function draw_text(ctx, stuff, text, image) {
     }
 }
 
-function PixelPreview({stuff, image, counter}) {
-    let [text, set_text] = useState("preview text")
-    let ref = useRef()
-    useEffect(()=>{
-        if (ref.current) {
-            let ctx = ref.current.getContext('2d')
-            ctx.fillStyle = 'white'
-            ctx.fillRect(0, 0, ref.current.width, ref.current.height)
-            ctx.imageSmoothingEnabled = false
-            if(image && stuff) draw_text(ctx,stuff,text,image)
-        }
-    },[ref,text,stuff,image,counter])
-    return <div>
-        <HBox>pixel preview</HBox>
-        <HBox>
-            <input type={'input'} value={text} onChange={evt => set_text(evt.target.value)}/>
-        </HBox>
-        <HBox>
-            <canvas className={'preview-canvas'} ref={ref} width={64*4} height={64}/>
-        </HBox>
-    </div>
-}
-
-PixelPreview.propTypes = {
-    stuff: PropTypes.shape({
-        default_height: PropTypes.func,
-        descent: PropTypes.func,
-        default_width: PropTypes.func,
-        ascent: PropTypes.func,
-        image_height: PropTypes.number,
-        count: PropTypes.func,
-        image_width: PropTypes.number
-    })
-}
 
 function App() {
-    // let [stuff,setStuff] = useState(()=>generateStuff())
-    // let [counter,setCounter] = useState(0)
-    // let [image,setImage] = useState(null)
-    // let [name, setName] = useState("")
-    // let [scale, setScale] = useState(3)
-    // let set = (num, prop, value) => {
-    //     stuff.metrics[num][prop] = value
-    //     setCounter(counter+1)
-    // }
-    // let setGlobal = (name) => {
-    //     setCounter(counter+1)
-    // }
-    // let onLoadImage = (evt) => {
+
     //     if(evt.target.files && evt.target.files.length >= 1) {
     //         let name = evt.target.files[0].name
     //         let img = new Image()
@@ -184,15 +139,6 @@ function App() {
     //         .then(res=>res.json())
     //         .then(data=> setStuff(generateStuff(image,data)))
     // }
-    // let onAddCategory = cat => {
-    //     addCategory(stuff,cat)
-    //     setCounter(counter+1)
-    // }
-    /*
-
-    list of glyphs
-
-     */
 
     const [selected_glyph, set_selected_glyph] = useState(null)
     return (
@@ -211,6 +157,7 @@ function App() {
                 <HBox>
                     <GlyphList datastore={datastore} selected={selected_glyph} setSelected={set_selected_glyph}/>
                     <GlyphCanvas datastore={datastore} selected={selected_glyph}/>
+                    <PixelPreview datastore={datastore}/>
                 </HBox>
             </VBox>
             {/*<div className="vbox">*/}

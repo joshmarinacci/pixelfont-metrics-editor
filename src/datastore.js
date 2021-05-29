@@ -1,9 +1,9 @@
 /*
 
 add glyphs one at a time, stored as separate bitmap data in JSON
-store as list of booleans. just black and white
-list of glphs, sorted by UTF-8 code
-default glyph size
+// store as list of booleans. just black and white
+list of glyphs, sorted by UTF-8 code
+// default glyph size is 10x10
 import and export via JSON upload
 
 

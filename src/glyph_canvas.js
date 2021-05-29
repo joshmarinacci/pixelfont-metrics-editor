@@ -32,9 +32,7 @@ export function GlyphCanvas({datastore, selected}) {
         if(ref.current) draw_canvas(ref.current,selected)
     },[selected])
     useEffect(()=>{
-        let h = () => {
-            draw_canvas(ref.current,selected)
-        }
+        let h = () => draw_canvas(ref.current,selected)
         datastore.on(EVENTS.GLYPH_UPDATED,h)
         return ()=>datastore.off(EVENTS.GLYPH_UPDATED,h)
     })
