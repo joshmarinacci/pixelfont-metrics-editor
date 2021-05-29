@@ -36,7 +36,13 @@ function draw(can, text, datastore) {
     }
     c.save()
     c.translate(0,20)
-    c.scale(2,2)
+    c.scale(8,8)
+    c.strokeStyle = 'aqua'
+    c.lineWidth = 0.5
+    c.beginPath()
+    c.moveTo(0,10-0.5)
+    c.lineTo(100,10-0.5)
+    c.stroke()
     let x = 0
     for(let i=0; i<text.length; i++) {
         let cp = text.codePointAt(i)
@@ -69,7 +75,7 @@ export function PixelPreview({datastore}) {
             <input type={'input'} value={text} onChange={evt => set_text(evt.target.value)}/>
         </HBox>
         <HBox>
-            <canvas className={'preview-canvas'} ref={ref} width={64*4} height={64}
+            <canvas className={'preview-canvas'} ref={ref} width={64*8} height={64*2}
                     style={{
                         border:'1px solid black',
                     }}

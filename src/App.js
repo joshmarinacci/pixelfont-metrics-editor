@@ -174,10 +174,11 @@ function App() {
                 </HBox>
                 <AddGlyphPanel datastore={datastore}/>
                 <HBox>
-
                     <GlyphList datastore={datastore} selected={selected_glyph} setSelected={set_selected_glyph}/>
-                    <GlyphCanvas datastore={datastore} selected={selected_glyph}/>
-                    <PixelPreview datastore={datastore}/>
+                    <VBox>
+                        <GlyphCanvas datastore={datastore} selected={selected_glyph}/>
+                        <PixelPreview datastore={datastore}/>
+                    </VBox>
                 </HBox>
             </VBox>
             {/*<div className="vbox">*/}
