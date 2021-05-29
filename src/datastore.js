@@ -1,12 +1,7 @@
 /*
-
 add glyphs one at a time, stored as separate bitmap data in JSON
-// store as list of booleans. just black and white
 list of glyphs, sorted by UTF-8 code
-// default glyph size is 10x10
 import and export via JSON upload
-
-
  */
 
 export const EVENTS = {
@@ -20,7 +15,6 @@ export class Datastore {
     on(type,cb) {
         this.listeners(type).push(cb)
     }
-
     listeners(type) {
         if(!this._listeners) this._listeners = {}
         if(!this._listeners[type]) {
@@ -36,17 +30,14 @@ export class Datastore {
         this.listeners(type).remove(cb)
     }
     fire(type,payload) {
-        this.log("firing",type)
         this.listeners(type).forEach(cb => cb(payload))
     }
-
     load_from_json() {
 
     }
     export_to_json() {
 
     }
-
 
     make_glyph(id,name) {
         let arr = new Array(10*10)
@@ -57,7 +48,11 @@ export class Datastore {
             width:10,
             height:10,
             baseline:8,
-            data:arr
+            data:arr,
+            ascent:8,
+            descent:2,
+            left:0,
+            right:0,
         }
     }
     add_glyph(g) {
@@ -85,6 +80,12 @@ export class Datastore {
             v = 0
         }
         g.data[n] = v
+        this.update_glyph(g)
+    }
+    set_glyph_metric(id,name,value) {
+        let g = this.find_glyph_by_id(id)
+        console.log("setting",name,'to',value)
+        g[name] = value
         this.update_glyph(g)
     }
 

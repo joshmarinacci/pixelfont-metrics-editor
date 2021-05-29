@@ -1,7 +1,32 @@
 import React, {useEffect, useRef, useState} from 'react'
 import * as PropTypes from 'prop-types'
 import {EVENTS} from './datastore.js'
+import {HBox, VBox} from './util.js'
 
+function MetricsPanel({datastore, selected}) {
+    const [count, setcount] = useState(0)
+    useEffect(()=>{
+        let h = () => setcount(count+1)
+        datastore.on(EVENTS.GLYPH_UPDATED,h)
+        return ()=>datastore.off(EVENTS.GLYPH_UPDATED,h)
+    })
+    if(!selected) return <HBox>nothing selected</HBox>
+    let glyph = datastore.find_glyph_by_id(selected.id)
+    return <VBox>
+        <HBox>
+            <label>left</label>
+            <input type={"number"} value={glyph.left} onChange={(e)=>{
+                datastore.set_glyph_metric(selected.id,'left',e.target.valueAsNumber)
+            }}/>
+        </HBox>
+        <HBox>
+            <label>ascent</label>
+            <input type={"number"} value={glyph.ascent} onChange={(e)=>{
+                datastore.set_glyph_metric(selected.id,'ascent',e.target.valueAsNumber)
+            }}/>
+        </HBox>
+    </VBox>
+}
 
 export function GlyphCanvas({datastore, selected}) {
     let ref = useRef()
@@ -26,6 +51,13 @@ export function GlyphCanvas({datastore, selected}) {
                 c.fillRect(i*scale,j*scale,scale,scale)
             }
         }
+
+        c.strokeStyle = 'red'
+        //draw left
+        c.beginPath()
+        c.moveTo(g.left*scale,0)
+        c.lineTo(g.left*scale,can.height)
+        c.stroke()
     }
 
     useEffect(()=>{
@@ -43,7 +75,6 @@ export function GlyphCanvas({datastore, selected}) {
             x:Math.floor((e.clientX-rect.left)/scale),
             y:Math.floor((e.clientY-rect.top)/scale),
         }
-        // console.log('setting at',pt)
         datastore.set_glyph_pixel(selected.id,pt)
     }
 
@@ -53,6 +84,7 @@ export function GlyphCanvas({datastore, selected}) {
         <canvas width={300} height={300} ref={ref}
                 onMouseDown={(e)=>set_pixel(e)}
         />
+        <MetricsPanel datastore={datastore} selected={selected}/>
     </div>
 }
 
