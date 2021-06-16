@@ -1,10 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react'
 import './App.css'
-import {MetricsCanvas} from './MetricsCanvas.js'
-import {MetricsControlPanel} from './MetricsSetupPanel.js'
-import {FillBox, HBox} from './util.js'
-import {MetricsList} from './MetricsList.js'
+import {FillBox, HBox, VBox} from './util.js'
 import * as PropTypes from 'prop-types'
+import {Datastore} from './datastore.js'
+import {GlyphList} from './glyph_list.js'
+import {GlyphCanvas} from './glyph_canvas.js'
+import {PixelPreview} from './preview.js'
+
+let datastore = new Datastore()
 
 function setif(obj, key, backup) {
     if(obj && obj.hasOwnProperty(key)) return obj[key]
@@ -66,7 +69,6 @@ const ExportPanel = ({stuff, counter,name})=>{
     </div>
 }
 
-
 function addCategory(stuff, cat) {
     if(cat === 'numbers') {
         for (let ch = 48; ch <= 57; ch++) {
@@ -118,99 +120,89 @@ function draw_text(ctx, stuff, text, image) {
     }
 }
 
-function PixelPreview({stuff, image, counter}) {
-    let [text, set_text] = useState("preview text")
-    let ref = useRef()
-    useEffect(()=>{
-        if (ref.current) {
-            let ctx = ref.current.getContext('2d')
-            ctx.fillStyle = 'white'
-            ctx.fillRect(0, 0, ref.current.width, ref.current.height)
-            ctx.imageSmoothingEnabled = false
-            if(image && stuff) draw_text(ctx,stuff,text,image)
-        }
-    },[ref,text,stuff,image,counter])
-    return <div>
-        <HBox>pixel preview</HBox>
-        <HBox>
-            <input type={'input'} value={text} onChange={evt => set_text(evt.target.value)}/>
-        </HBox>
-        <HBox>
-            <canvas className={'preview-canvas'} ref={ref} width={64*4} height={64}/>
-        </HBox>
-    </div>
+
+function AddGlyphPanel({datastore}) {
+    const [codepoint, set_codepoint] = useState(65)
+    const [name, set_name] = useState("A")
+    return <HBox>
+        <label>codepoint</label>
+        <input type="number" value={codepoint} onChange={(e)=>set_codepoint(e.target.valueAsNumber)}/>
+        <label>name</label>
+        <input type="string" value={name} onChange={(e)=>{set_name(e.target.value)}}/>
+        <button onClick={()=>{
+            let gl = datastore.make_glyph(codepoint,name)
+            datastore.add_glyph(gl)
+            set_codepoint(65)
+            set_name("A")
+        }}>add glyph</button>
+    </HBox>
+
 }
 
-PixelPreview.propTypes = {
-    stuff: PropTypes.shape({
-        default_height: PropTypes.func,
-        descent: PropTypes.func,
-        default_width: PropTypes.func,
-        ascent: PropTypes.func,
-        image_height: PropTypes.number,
-        count: PropTypes.func,
-        image_width: PropTypes.number
-    })
-}
+AddGlyphPanel.propTypes = {datastore: PropTypes.any}
 
 function App() {
-    let [stuff,setStuff] = useState(()=>generateStuff())
-    let [counter,setCounter] = useState(0)
-    let [image,setImage] = useState(null)
-    let [name, setName] = useState("")
-    let [scale, setScale] = useState(3)
-    let set = (num, prop, value) => {
-        stuff.metrics[num][prop] = value
-        setCounter(counter+1)
-    }
-    let setGlobal = (name) => {
-        setCounter(counter+1)
-    }
-    let onLoadImage = (evt) => {
-        if(evt.target.files && evt.target.files.length >= 1) {
-            let name = evt.target.files[0].name
-            let img = new Image()
-            img.onload = () => {
-                setImage(img)
-                setStuff(generateStuff(img,null))
-                setName(name)
-            }
-            img.src = URL.createObjectURL(evt.target.files[0])
-        }
-    }
-    let onLoadJSON = evt => {
-        fetch(URL.createObjectURL(evt.target.files[0]))
-            .then(res=>res.json())
-            .then(data=> setStuff(generateStuff(image,data)))
-    }
-    let onAddCategory = cat => {
-        addCategory(stuff,cat)
-        setCounter(counter+1)
-    }
+    const [selected_glyph, set_selected_glyph] = useState(null)
     return (
         <FillBox>
-            <div className="vbox">
-                <MetricsControlPanel
-                    stuff={stuff}
-                    onLoadImage={onLoadImage} onLoadJSON={onLoadJSON}
-                    onAddCategory={onAddCategory}
-                    name={name}
-                />
-                <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>
-            </div>
-            <div className={"vbox grow"}>
+            <VBox>
                 <HBox>
-                    <button onClick={()=>setScale(scale+1)}>+</button>
-                    <label>{Math.pow(2,scale)}</label>
-                    <button onClick={()=>setScale(scale-1)}>-</button>
+                    <button onClick={()=>{
+                        let json = datastore.export_to_json()
+                        download(JSON.stringify(json,null,'   '),datastore.get_name())
+                    }}>export</button>
+                    <input type="file" onChange={(e)=>{
+                        if(!e.target.files[0]) return
+                        let name = e.target.files[0].name
+                            fetch(URL.createObjectURL(e.target.files[0]))
+                                .then(res=>res.json())
+                                .then(data=> {
+                                    console.log('data is',data)
+                                    datastore.import_from_json(data)
+                                }).catch(e => {
+                                    console.log("error",e)
+                            })
+                    }}/>
+                    {/*<button onClick={()=>{*/}
+                    {/*    let g = datastore.make_glyph("A".codePointAt(0),"A")*/}
+                    {/*    datastore.add_glyph(g)*/}
+                    {/*}}>add uppercase</button>*/}
+                    {/*<button onClick={()=>{*/}
+                    {/*    let g = datastore.make_glyph("B".codePointAt(0),"B")*/}
+                    {/*    datastore.add_glyph(g)*/}
+                    {/*}}>add lowercase</button>*/}
                 </HBox>
-                <MetricsCanvas stuff={stuff}
-                               counter={counter}
-                               sc={Math.pow(2,scale)}
-                               image={image}/>
-                <PixelPreview stuff={stuff} counter={counter} image={image}/>
-                <ExportPanel stuff={stuff} counter={counter} name={name}/>
-            </div>
+                <AddGlyphPanel datastore={datastore}/>
+                <HBox>
+                    <GlyphList datastore={datastore} selected={selected_glyph} setSelected={set_selected_glyph}/>
+                    <VBox>
+                        <GlyphCanvas datastore={datastore} selected={selected_glyph}/>
+                        <PixelPreview datastore={datastore}/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            {/*<div className="vbox">*/}
+            {/*    <MetricsControlPanel*/}
+            {/*        stuff={stuff}*/}
+            {/*        onLoadImage={onLoadImage} onLoadJSON={onLoadJSON}*/}
+            {/*        onAddCategory={onAddCategory}*/}
+            {/*        name={name}*/}
+            {/*    />*/}
+            {/*    <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>*/}
+            {/*</div>*/}
+            {/*<div className={"vbox grow"}>*/}
+            {/*    <HBox>*/}
+            {/*        <button onClick={()=>setScale(scale+1)}>+</button>*/}
+            {/*        <label>{Math.pow(2,scale)}</label>*/}
+            {/*        <button onClick={()=>setScale(scale-1)}>-</button>*/}
+            {/*    </HBox>*/}
+            {/*    <MetricsCanvas stuff={stuff}*/}
+            {/*                   counter={counter}*/}
+            {/*                   sc={Math.pow(2,scale)}*/}
+            {/*                   image={image}/>*/}
+            {/*    <PixelPreview stuff={stuff} counter={counter} image={image}/>*/}
+            {/*    <ExportPanel stuff={stuff} counter={counter} name={name}/>*/}
+            {/*</div>*/}
         </FillBox>
     );
 }
