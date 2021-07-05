@@ -34,7 +34,8 @@ function MetricsPanel({datastore, selected}) {
 
 export function GlyphCanvas({datastore, selected}) {
     let ref = useRef()
-    const [scale, set_scale] = useState(20)
+    const [zoom, set_zoom] = useState(5)
+    let scale = Math.pow(2,zoom)
 
     function draw_canvas(can,selected) {
         if(!can) return
@@ -78,7 +79,7 @@ export function GlyphCanvas({datastore, selected}) {
 
     useEffect(()=>{
         if(ref.current) draw_canvas(ref.current,selected)
-    },[selected])
+    },[selected,zoom])
     useEffect(()=>{
         let h = () => draw_canvas(ref.current,selected)
         datastore.on(EVENTS.GLYPH_UPDATED,h)
@@ -97,6 +98,10 @@ export function GlyphCanvas({datastore, selected}) {
     return <div style={{
         border:'1px solid black'
     }}>
+        <HBox>
+            <button onClick={()=>set_zoom(zoom+1)}>zoom in</button>
+            <button onClick={()=>set_zoom(zoom-1)}>zoom out</button>
+        </HBox>
         <canvas width={300} height={300} ref={ref}
                 onMouseDown={(e)=>set_pixel(e)}
         />

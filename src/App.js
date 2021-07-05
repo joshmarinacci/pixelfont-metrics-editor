@@ -69,38 +69,6 @@ const ExportPanel = ({stuff, counter,name})=>{
     </div>
 }
 
-function addCategory(stuff, cat) {
-    if(cat === 'numbers') {
-        for (let ch = 48; ch <= 57; ch++) {
-            stuff.metrics[ch] = make_metric(ch, stuff)
-            stuff.count++
-        }
-    }
-    if(cat === 'uppercase') {
-        for (let ch = 65; ch <= 90; ch++) {
-            stuff.metrics[ch] = make_metric(ch, stuff)
-            stuff.count++
-        }
-    }
-    if(cat === 'lowercase') {
-        for (let ch = 97; ch <= 122; ch++) {
-            stuff.metrics[ch] = make_metric(ch, stuff)
-            stuff.count++
-        }
-    }
-    if(cat === 'punctuation') {
-        let chars = []
-        for (let ch = 32; ch <= 47; ch++) chars[ch] = ch
-        for (let ch = 58; ch <= 64; ch++) chars[ch] = ch
-        for (let ch = 91; ch <= 96; ch++) chars[ch] = ch
-        for (let ch = 123; ch <= 126; ch++) chars[ch] = ch
-        chars.forEach(ch => {
-            stuff.metrics[ch] = make_metric(ch, stuff)
-            stuff.count++
-        })
-    }
-}
-
 function draw_text(ctx, stuff, text, image) {
     let dx = 0
     let dy = 0
@@ -163,14 +131,6 @@ function App() {
                                     console.log("error",e)
                             })
                     }}/>
-                    {/*<button onClick={()=>{*/}
-                    {/*    let g = datastore.make_glyph("A".codePointAt(0),"A")*/}
-                    {/*    datastore.add_glyph(g)*/}
-                    {/*}}>add uppercase</button>*/}
-                    {/*<button onClick={()=>{*/}
-                    {/*    let g = datastore.make_glyph("B".codePointAt(0),"B")*/}
-                    {/*    datastore.add_glyph(g)*/}
-                    {/*}}>add lowercase</button>*/}
                 </HBox>
                 <AddGlyphPanel datastore={datastore}/>
                 <HBox>
@@ -181,28 +141,6 @@ function App() {
                     </VBox>
                 </HBox>
             </VBox>
-            {/*<div className="vbox">*/}
-            {/*    <MetricsControlPanel*/}
-            {/*        stuff={stuff}*/}
-            {/*        onLoadImage={onLoadImage} onLoadJSON={onLoadJSON}*/}
-            {/*        onAddCategory={onAddCategory}*/}
-            {/*        name={name}*/}
-            {/*    />*/}
-            {/*    <MetricsList stuff={stuff} set={set} setGlobal={setGlobal}/>*/}
-            {/*</div>*/}
-            {/*<div className={"vbox grow"}>*/}
-            {/*    <HBox>*/}
-            {/*        <button onClick={()=>setScale(scale+1)}>+</button>*/}
-            {/*        <label>{Math.pow(2,scale)}</label>*/}
-            {/*        <button onClick={()=>setScale(scale-1)}>-</button>*/}
-            {/*    </HBox>*/}
-            {/*    <MetricsCanvas stuff={stuff}*/}
-            {/*                   counter={counter}*/}
-            {/*                   sc={Math.pow(2,scale)}*/}
-            {/*                   image={image}/>*/}
-            {/*    <PixelPreview stuff={stuff} counter={counter} image={image}/>*/}
-            {/*    <ExportPanel stuff={stuff} counter={counter} name={name}/>*/}
-            {/*</div>*/}
         </FillBox>
     );
 }
