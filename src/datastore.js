@@ -96,12 +96,35 @@ export class Datastore {
     }
     set_glyph_metric(id,name,value) {
         let g = this.find_glyph_by_id(id)
-        console.log("setting",name,'to',value)
+        if(name === "width" || name === "height") this.resize_glyph(g,name,value)
         g[name] = value
         this.update_glyph(g)
     }
 
     log(...args) {
         console.log("DATASTORE",...args)
+    }
+
+    resize_glyph(g,name,value) {
+        let old_width = g.width
+        let old_height = g.height
+        let new_width = g.width
+        let new_height = g.height
+        if(name === 'width') new_width = value
+        if(name === 'height') new_height = value
+        let old_data = g.data.slice()
+        let new_data = new Array(new_width*new_height)
+        new_data.fill(0)
+        for(let i=0; i<old_width; i++) {
+            for(let j=0; j<old_height; j++) {
+                let old_n = j*old_width+i
+                let new_n = j*new_width+i
+                if(i < new_width && j < new_height) {
+                    new_data[new_n] = old_data[old_n]
+                }
+            }
+        }
+        g.data = new_data
+
     }
 }

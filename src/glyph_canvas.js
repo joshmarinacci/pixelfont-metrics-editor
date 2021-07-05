@@ -29,6 +29,8 @@ function MetricsPanel({datastore, selected}) {
         <MetricEditor glyph={glyph} name={"descent"} datastore={datastore}/>
         <MetricEditor glyph={glyph} name={"left"} datastore={datastore}/>
         <MetricEditor glyph={glyph} name={"right"} datastore={datastore}/>
+        <MetricEditor glyph={glyph} name={"width"} datastore={datastore}/>
+        <MetricEditor glyph={glyph} name={"height"} datastore={datastore}/>
     </VBox>
 }
 
