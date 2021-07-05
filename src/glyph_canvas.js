@@ -34,7 +34,7 @@ function MetricsPanel({datastore, selected}) {
 
 export function GlyphCanvas({datastore, selected}) {
     let ref = useRef()
-    const [zoom, set_zoom] = useState(5)
+    const [zoom, set_zoom] = useState(4)
     let scale = Math.pow(2,zoom)
 
     function draw_canvas(can,selected) {
