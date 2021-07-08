@@ -38,6 +38,8 @@ export function GlyphCanvas({datastore, selected}) {
     let ref = useRef()
     const [zoom, set_zoom] = useState(4)
     let scale = Math.pow(2,zoom)
+    const [dragging, set_dragging] = useState(false)
+    const [value, set_value] = useState(0)
 
     function draw_canvas(can,selected) {
         if(!can) return
@@ -81,21 +83,37 @@ export function GlyphCanvas({datastore, selected}) {
 
     useEffect(()=>{
         if(ref.current) draw_canvas(ref.current,selected)
-    },[selected,zoom])
+    },[selected,zoom,dragging])
     useEffect(()=>{
         let h = () => draw_canvas(ref.current,selected)
         datastore.on(EVENTS.GLYPH_UPDATED,h)
         return ()=>datastore.off(EVENTS.GLYPH_UPDATED,h)
     })
 
-    function set_pixel(e) {
+    function screen_to_canvas(e) {
         let rect = e.target.getBoundingClientRect()
-        let pt = {
+        return {
             x:Math.floor((e.clientX-rect.left)/scale),
             y:Math.floor((e.clientY-rect.top)/scale),
         }
-        datastore.set_glyph_pixel(selected.id,pt)
     }
+    function start_drag(e) {
+        let pt = screen_to_canvas(e)
+        datastore.flip_glyph_pixel(selected.id,pt)
+        let value = datastore.get_glyph_pixel(selected.id,pt)
+        set_value(value)
+        set_dragging(true)
+    }
+    function move_drag(e) {
+        if(dragging) {
+            let pt = screen_to_canvas(e)
+            datastore.set_glyph_pixel(selected.id,pt,value)
+        }
+    }
+    function stop_drag(e) {
+        set_dragging(false)
+    }
+
 
     return <div style={{
         border:'1px solid black'
@@ -105,7 +123,9 @@ export function GlyphCanvas({datastore, selected}) {
             <button onClick={()=>set_zoom(zoom-1)}>zoom out</button>
         </HBox>
         <canvas width={300} height={300} ref={ref}
-                onMouseDown={(e)=>set_pixel(e)}
+                onMouseDown={e=>start_drag(e)}
+                onMouseMove={e=>move_drag(e)}
+                onMouseUp={e=>stop_drag(e)}
         />
         <MetricsPanel datastore={datastore} selected={selected}/>
     </div>

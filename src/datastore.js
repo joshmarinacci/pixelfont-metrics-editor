@@ -82,7 +82,19 @@ export class Datastore {
         return this.glyphs.find(g => g.id === id)
     }
 
-    set_glyph_pixel(id,pt) {
+    get_glyph_pixel(id,pt) {
+        let g = this.find_glyph_by_id(id)
+        let n = pt.x + pt.y * g.width
+        let v = g.data[n]
+        return v
+    }
+    set_glyph_pixel(id,pt, v) {
+        let g = this.find_glyph_by_id(id)
+        let n = pt.x + pt.y * g.width
+        g.data[n] = v
+        this.update_glyph(g)
+    }
+    flip_glyph_pixel(id,pt) {
         let g = this.find_glyph_by_id(id)
         let n = pt.x + pt.y * g.width
         let v = g.data[n]
