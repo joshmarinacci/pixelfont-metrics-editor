@@ -137,7 +137,7 @@ function App() {
                     <GlyphList datastore={datastore} selected={selected_glyph} setSelected={set_selected_glyph}/>
                     <VBox>
                         <GlyphCanvas datastore={datastore} selected={selected_glyph}/>
-                        <PixelPreview datastore={datastore}/>
+                        <PixelPreview datastore={datastore} selected={selected_glyph}/>
                     </VBox>
                 </HBox>
             </VBox>

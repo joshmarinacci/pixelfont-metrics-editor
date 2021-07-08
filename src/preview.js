@@ -56,7 +56,7 @@ function draw(can, text, datastore) {
     c.restore()
 }
 
-export function PixelPreview({datastore}) {
+export function PixelPreview({datastore, selected}) {
     let [text, set_text] = useState("ABC 123 abc")
     let ref = useRef()
     useEffect(()=>{
@@ -69,10 +69,16 @@ export function PixelPreview({datastore}) {
         return ()=>datastore.off(EVENTS.GLYPH_UPDATED,h)
     })
 
+    function insert_selected_glyph() {
+        if(!selected) return
+        set_text(text+String.fromCodePoint(selected.id))
+    }
+
     return <div>
         <HBox>pixel preview</HBox>
         <HBox>
             <input type={'input'} value={text} onChange={evt => set_text(evt.target.value)}/>
+            <button onClick={insert_selected_glyph}>insert {selected?selected.name:"nothing selected"}</button>
         </HBox>
         <HBox>
             <canvas className={'preview-canvas'} ref={ref} width={64*8} height={64*2}
