@@ -113,7 +113,7 @@ function App() {
     const [selected_glyph, set_selected_glyph] = useState(null)
     return (
         <FillBox>
-            <VBox>
+            <VBox grow={true}>
                 <HBox>
                     <button onClick={()=>{
                         let json = datastore.export_to_json()
@@ -133,9 +133,9 @@ function App() {
                     }}/>
                 </HBox>
                 <AddGlyphPanel datastore={datastore}/>
-                <HBox>
+                <HBox grow={true} stretch={true}>
                     <GlyphList datastore={datastore} selected={selected_glyph} setSelected={set_selected_glyph}/>
-                    <VBox>
+                    <VBox grow stretch>
                         <GlyphCanvas datastore={datastore} selected={selected_glyph}/>
                         <PixelPreview datastore={datastore} selected={selected_glyph}/>
                     </VBox>
