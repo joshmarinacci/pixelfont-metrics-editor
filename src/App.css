@@ -1,22 +1,29 @@
 .fillbox {
-  border: 0px solid blue;
+  border: 1px solid blue;
   padding:0;
   margin:0;
   display: flex;
   flex-direction: row;
-  height: 95vh;
-  width: 95vw;
+  height: 80vh;
+  width: 80vw;
+}
+.grow {
+  flex:1.0;
 }
 .hbox {
+  border: 1px solid green;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  /*align-items: stretch;*/
+  /*align-items: flex-start;*/
 }
 .vbox {
   display: flex;
   flex-direction: column;
+  border: 4px solid magenta;
   /*align-items: flex-start;*/
+}
+.stretch {
+  align-items: stretch;
 }
 ul {
   border: 1px solid black;
@@ -26,11 +33,13 @@ ul {
 .glyph-list {
   padding:0;
   margin:0;
-  width: 10em;
+  width: 15em;
 }
 
 .scroll {
-  max-height: 500px;
+  /*max-height: 500px;*/
+  border: 1px solid green;
+  max-height: 100%;
   overflow: auto;
 }
 

@@ -97,7 +97,7 @@ export function GlyphCanvas({datastore, selected}) {
     return <div style={{
         border:'1px solid black'
     }}>
-        <canvas width={300} height={300} ref={ref}
+        <canvas width={500} height={500} ref={ref}
                 onMouseDown={(e)=>set_pixel(e)}
         />
         <MetricsPanel datastore={datastore} selected={selected}/>
